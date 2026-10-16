@@ -1,0 +1,37 @@
+# Stacked PRs
+
+An open agent skill for splitting large changes into focused PRs, carrying review fixes through the stack, and landing changes in order.
+
+Works with GitHub, GitLab, Bitbucket, and skills-compatible coding agents such as Codex, Claude Code, and Cursor.
+
+## Install
+
+```sh
+npx skills@1.7.2 add https://github.com/Qabbout/stacked-prs-skill/tree/v1.0.0 --skill stacked-prs
+```
+
+Choose your agent in the installer. Also available on [skills.sh](https://skills.sh/qabbout/stacked-prs-skill/stacked-prs).
+
+The command pins the installer version and release tag. npm is used only for installation. To avoid npm, download the [v1.0.0 source](https://github.com/Qabbout/stacked-prs-skill/archive/refs/tags/v1.0.0.zip), review it, and copy `SKILL.md`, `references/`, and `scripts/` into your agent's skills directory under `stacked-prs/`, preserving executable permissions on the shell scripts.
+
+## Use
+
+Ask your agent:
+
+- “Use stacked-prs to split this branch into reviewable PRs.”
+- “Fix this review comment and carry the fix up the stack.”
+- “Help land this PR stack in dependency order.”
+
+Requires Git, Bash 3.2+, Python 3.9+, and authenticated access to your Git host. See [SKILL.md](SKILL.md) for the workflow and bundled helpers.
+
+## Test locally
+
+```sh
+python3 -m unittest discover -s tests -v
+```
+
+Tests use disposable local Git repositories. GitHub Actions is disabled.
+
+## License
+
+[MIT](LICENSE) © 2026 Abdulrahman Qabbout.
