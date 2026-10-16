@@ -53,6 +53,17 @@ class PackagingTests(unittest.TestCase):
         entrypoints = {path for path in paths if Path(path).name == "SKILL.md"}
         self.assertEqual(entrypoints, {"SKILL.md"})
 
+    def test_readme_release_pins_match_the_skill_version(self):
+        skill = (ROOT / "SKILL.md").read_text()
+        version = re.search(r'^\s+version:\s*"([^"]+)"$', skill, re.MULTILINE).group(1)
+        readme = (ROOT / "README.md").read_text()
+        install_tags = re.findall(r"stacked-prs-skill/tree/(v[\d.]+)", readme)
+        archive_tags = re.findall(r"stacked-prs-skill/archive/refs/tags/(v[\d.]+)\.zip", readme)
+        standalone_tags = re.findall(r"standalone installation stays on tag `(v[\d.]+)`", readme)
+        self.assertEqual(install_tags, [f"v{version}"])
+        self.assertEqual(archive_tags, [f"v{version}"])
+        self.assertEqual(standalone_tags, [f"v{version}"])
+
 
 if __name__ == "__main__":
     unittest.main()
