@@ -6,6 +6,22 @@ Works with GitHub, GitLab, Bitbucket, and skills-compatible coding agents such a
 
 ## Install
 
+**Claude Code plugin**
+
+```sh
+claude plugin marketplace add Qabbout/stacked-prs-skill
+claude plugin install stacked-prs@qabbout-stacked-prs
+```
+
+**Codex plugin**
+
+```sh
+codex plugin marketplace add Qabbout/stacked-prs-skill
+codex plugin add stacked-prs@qabbout-stacked-prs
+```
+
+**Standalone skill (skills.sh)**
+
 ```sh
 npx skills@1.7.2 add https://github.com/Qabbout/stacked-prs-skill/tree/v1.0.0 --skill stacked-prs
 ```
@@ -23,6 +39,17 @@ Ask your agent:
 - “Help land this PR stack in dependency order.”
 
 Requires Git, Bash 3.2+, Python 3.9+, and authenticated access to your Git host. See [SKILL.md](SKILL.md) for the workflow and bundled helpers.
+
+Native plugins namespace the skill: use `/stacked-prs:stacked-prs` in Claude Code, or select it from `/skills` in Codex.
+
+## Updates
+
+```sh
+claude plugin update stacked-prs@qabbout-stacked-prs
+codex plugin marketplace upgrade qabbout-stacked-prs
+```
+
+Claude Code uses the plugin manifest version; automatic updates are opt-in in `/plugin`. The Codex command refreshes the marketplace catalog. Both marketplaces track the default branch; the standalone installation stays on tag `v1.0.0`.
 
 ## Test locally
 
