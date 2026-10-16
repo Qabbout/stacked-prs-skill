@@ -27,10 +27,13 @@ If N changes, update every title (with approval). When the stack changes shape, 
 
 **Cutover built from the fork point:** add **How this branch is built (read first)**:
 - It's based on the fork point (`<sha>`), not on the current base, and carries PRs 1–k as their own commits.
-- **Review only the last commit, "<subject>".** The rest goes away when the base is merged in after those PRs land.
-- Content equals the reference's except <planned differences>.
+- Link or summarize the copied-dependency map: starting base, source tips, original-to-copy SHAs, and the boundary before the cutover's own edits. Publishing the full local record requires authorization.
+- **Identify the cutover's own commits:** initially `<after-copies>..<initial-cutover-tip>`. After base merges, that range to the current tip also includes upstream commits: identify cutover/port commits explicitly and review the full current target diff with the porting log. Merging the landed base can reduce duplicate content, but later fixes and ports require reconciliation; do not promise that copied changes simply disappear.
+- Content equals the reference's except <planned differences and reconciled upstream changes>.
 
 Then list **Behavior changes**, **Expected conflicts with <base>** (the file list from splitting step 2, plus the base's new files that use removed code), **Decision pending**, and **Open questions**. Mark What to test "(after conflicts are resolved)".
+
+Before landing, draft a **Reconciliation** summary from `reconciliation.md`: checked source/base/cutover SHAs, map/log location or an authorized summary, relevant change outcomes, removed-API reference checks, and unresolved items or skipped validation. Refresh it when those tips move. A clean merge alone is not evidence that upstream changes were preserved.
 
 **Review follow-up slice:** "the follow-up to <reviewer>'s review of #<pr>", then **Cause**, **Fix**, an optional "What stays the same", and **Tests**.
 

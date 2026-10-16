@@ -7,7 +7,7 @@ Ticket / epic: <ID>
 Host: <GitHub | GitLab | Bitbucket>, merges by <merge commit | squash | rebase>, retargets on merge-and-delete: <yes | no | unchecked>
 Base: <main, master, develop, or the project's integration branch>
 Reference: <branch> (#<n>, open, unchanged)
-Fork point: <sha>     Pinned base for cutting: <sha>
+Reference tip: <sha>     Fork point: <sha>     Pinned base for cutting: <sha>
 Integration branch: <name or "none"> = base + PRs <…>
 
 | # | Branch | PR | Targets | Start point | Other PRs target it? | Layer / owns |
@@ -17,10 +17,26 @@ Integration branch: <name or "none"> = base + PRs <…>
 | 3 | feature/<ID>-03-<slug> | <link> | feature/<ID>-stack-base | stack-base | **yes: PR 4** | compiled but unused |
 | 4 | feature/<ID>-04-<slug> | <link> | feature/<ID>-03-<slug> | PR 3 | no | cutover |
 
+Copied dependencies: <none, or complete the record below>
+Cutover branch: <branch>
+Cutover starting commit before copies: <sha>
+Base tip observed when copies were made: <sha>
+Tip after copies, before the cutover's own edits: <sha>
+
+| Source slice / PR | Source tip when copied | Original commit SHA | Copied commit SHA on cutover | Landed base SHA, when known |
+|-------------------|------------------------|---------------------|------------------------------|-----------------------------|
+| <slice / link> | <sha> | <sha> | <sha> | <sha or not landed> |
+
+Reconciliation: <not needed, or porting-log location>
+Last checked: base <sha>, cutover <sha>; unresolved items <…>
 Working worktree: <path>
 ```
 
 The "Other PRs target it?" column lists the PRs to check right after that branch merges (rule 10): are they still open, and retargeted?
+
+Copied dependencies are separate from PR targets. A cutover targeting the base can still need every later fix to its copied slices. Record one mapping per copied commit, including later cherry-picks; preserve the original baseline and append updates. Record manual ports in the porting log rather than inventing a copied SHA. A source branch's deletion or squash landing does not remove the dependency.
+
+When resuming without a map, reconstruct these facts from available commits, patches and landing evidence. Mark missing facts **unknown**; do not guess from commit subjects or replace the original baseline with today's base. Unresolved provenance must remain visible in the readiness report. Use `reconciliation.md` to account for later source/base changes and record verification against exact tips.
 
 ## Finding the stack when nobody wrote it down
 
@@ -40,19 +56,15 @@ $SKILL/scripts/stack-status.sh feature/<ID>-01-<slug>:develop feature/<ID>-04-<s
 
 ## Finding which slice owns some lines
 
-Start from the branch the comment is on, with the line numbers as that PR shows them. List every slice with its target, lowest first, and run this in bash:
+Start from the branch the comment is on, with the line numbers as that PR shows them. Pin its tip, then inspect the relevant hunks:
 
 ```bash
-B=origin/<branch the comment is on>; FILE=path/to/file; LINES=120,160
-PAIRS="feature/<ID>-01-<slug>:develop feature/<ID>-04-<slug>:feature/<ID>-stack-base"   # every slice:target, lowest first
-git blame -s -L "$LINES" "$B" -- "$FILE" | awk '{sub(/^\^/, "", $1); print $1}' | sort -u | while read -r c; do
-  subj=$(git log -1 --format=%s "$c")
-  for p in $PAIRS; do s=${p%%:*}; t=${p#*:}
-    if git log --no-merges --format=%s "origin/$t..origin/$s" | grep -qxF -- "$subj"; then echo "$c ($subj) belongs to $s"; break; fi
-  done
-done
+B=$(git rev-parse origin/<branch>); FILE=path/to/file; LINES=120,160
+git blame -L "$LINES" "$B" -- "$FILE"
+git show <blamed-sha> -- "$FILE"
+git show <original-source-sha> -- "$FILE"   # from the copied-dependency map
 ```
 
-`git blame` names the commits that last changed those lines. Each commit is matched by subject against each slice's own commits (target..slice), so a cherry-picked copy, such as a cutover's copies of lower slices, is credited to the slice that made the original. A commit that matches no slice came from the base. Right after a split, `split-coverage.sh -v` also lists each file's owning slice.
+`git blame` identifies the last recorded change to surviving lines, not their complete intent or the history of deleted lines. Use the source-to-copy map and actual patches to establish ownership; inspect parent versions and rename/deletion history when needed. Matching subjects are only leads: subjects can repeat or change, and a non-match does not prove the change came from the base. Right after a split, `split-coverage.sh -v` also lists each file's first owning slice; a file can contain hunks with different owners.
 
 In zsh, split command output into an array (`B=($(…))`) before passing a branch list to a script, because zsh doesn't split `$var` into words.

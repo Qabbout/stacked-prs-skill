@@ -44,11 +44,15 @@ Show the user a table (size, what it is, what happens if it's deleted) and delet
 
 ## Cherry-pick conflict
 
-Resolve by keeping both intents, then run `git cherry-pick --continue`. If the branch has rewritten that code entirely, write the fix again in its terms as a separate commit, and say so in the report. To back out, run `git cherry-pick --abort`. A cherry-pick that needed conflict fixes shows as "probably" (or "no") in `stack-status.sh -c`, so check it by eye.
+Resolve by keeping both intents, then run `git cherry-pick --continue`. If the branch has rewritten that code entirely, write the fix again in its terms as a separate commit, and record the original change, destination and checks in the porting log (`reconciliation.md`). To back out, run `git cherry-pick --abort`. A cherry-pick that needed conflict fixes shows as "probably" (or "no") in `stack-status.sh -c`; inspect the current result rather than treating history as proof of preservation.
 
 ## A parent PR was merged (or squash-merged) into the base
 
-Follow `landing.md` steps 0 and 3: check the dependents were retargeted and are still open (retarget by hand, with approval, where the host didn't), merge the base into them (where a conflict is on a line the child changed, keep the child's version, then check the PR's diff is only its own slice), get the pushes approved, and carry the merges up. There's never a rebase or a force push.
+Follow `landing.md` steps 0 and 3: check target dependents were retargeted and are still open (retarget by hand, with approval, where the host didn't), and include copied dependents even if their targets did not change. Merge the base into them, reconcile newer upstream fixes with each child's intentional edits, and inspect the full PR diff. Use `reconciliation.md` for copied slices or ports; neither side wins automatically. Get the pushes approved and carry updates through both kinds of dependency. There's never a rebase or a force push.
+
+## Copied slices are stale or their provenance is missing
+
+Recover the original-to-copy map and historical baseline from available commits, patches and landing evidence (`stack-map.md`). Mark unavailable facts unknown rather than guessing from subjects or substituting the current base. Use `reconciliation.md` to inventory relevant review/base changes, adapt their intent and check removed-API references, including new base files. Record each outcome and actual evidence in the porting log. A clean merge or reduced-coverage `split-coverage.sh -i` run cannot close these items; keep unresolved preservation and missing validation visible as readiness blockers.
 
 ## A branch was pushed before its checks finished
 

@@ -78,9 +78,11 @@ Write the plan as a numbered list (it goes into PR 1's description) and **agree 
 | Nothing beyond the base | base | `$BASE` |
 | Several independent slices | an integration branch (base + those slices) | the integration branch |
 | Exactly one slice | that slice's branch | that branch |
-| Can't be built on the current base yet (heavy conflicts the team can't resolve yet) | base | `$FORK`, with the lower slices carried along as commits; tell reviewers to review only the last commit |
+| Can't be built on the current base yet (heavy conflicts the team can't resolve yet) | base | `$FORK`, with lower slices carried along; identify the cutover's own commit range for review |
 
 Independent slices should target the base directly. If the host merges by squash, prefer independent slices and short chains (see `landing.md`).
+
+For any branch carrying copied slices, create the copied-dependency record in `stack-map.md` independently of its PR target. Pin its starting commit and the observed base, record each source slice's tip and original-to-copy commit mapping, and save the tip after copies before adding the cutover's own edits. These pins let later agents find review fixes absent from the copies. Keep the record through landing; do not advance historical pins when branches move.
 
 ## 5. Cut the branches
 
@@ -130,7 +132,7 @@ Handle every line those three commands print before committing:
 
 - **One feature commit per slice.** Review fixes go on top as separate commits later.
 - **The integration branch:** `git switch -c feature/<ID>-stack-base $BASE`, then `git merge --no-ff <slice>` for each independent slice.
-- **A slice built from the fork point:** cherry-pick the lower slices' feature commits onto `$FORK` first, then add the slice's own commit.
+- **A slice built from the fork point:** cherry-pick the lower slices' feature commits onto `$FORK` first, recording their source/copy SHAs, then add the slice's own commit. Later fixes to those sources must reach this slice through B4 even when its PR targets the base directly. For rewritten code, record manual ports with their checks in `reconciliation.md`'s log.
 
 ## 6. Check the split
 
@@ -145,7 +147,7 @@ Handle every line those three commands print before committing:
    | `DECIDE` | One side deleted the file and the other changed it | Ask the user which wins |
    | `EXTRA` | A slice changes a file the reference doesn't touch (including deleting or changing a file only the base has) | Remove it, unless it's planned |
 
-   When resuming an older stack whose slices have since merged the base, add `-i`, and treat the rest as hints rather than errors.
+   When resuming an older stack whose slices have since merged the base, add `-i`, and treat the rest as hints rather than errors. This skips base-changed paths and reduces coverage; account for relevant skipped/new-base changes through `reconciliation.md` before landing a cutover. Snapshot coverage does not establish that later review fixes or manually ported behavior survive.
 2. **The top of the stack equals the reference** on the reference's files, apart from the base's newer changes and the planned differences.
 3. **Every slice builds on its own,** if builds are allowed. If not, `git grep` the definitions of the symbols each slice uses, and say which check you ran.
 4. **The "safe to merge" claims hold,** checked with `git grep` on the base.

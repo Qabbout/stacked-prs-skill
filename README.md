@@ -23,12 +23,12 @@ codex plugin add stacked-prs@qabbout-stacked-prs
 **Standalone skill (skills.sh)**
 
 ```sh
-npx skills@1.7.2 add https://github.com/Qabbout/stacked-prs-skill/tree/v1.1.0 --skill stacked-prs
+npx skills@1.7.2 add https://github.com/Qabbout/stacked-prs-skill/tree/v1.1.1 --skill stacked-prs
 ```
 
 Choose your agent in the installer. Also available on [skills.sh](https://skills.sh/qabbout/stacked-prs-skill/stacked-prs).
 
-The command pins the installer version and release tag. npm is used only for installation. To avoid npm, download the [v1.1.0 source](https://github.com/Qabbout/stacked-prs-skill/archive/refs/tags/v1.1.0.zip), review it, and copy `SKILL.md`, `references/`, and `scripts/` into your agent's skills directory under `stacked-prs/`, preserving executable permissions on the shell scripts.
+The command pins the installer version and release tag. npm is used only for installation. To avoid npm, download the [v1.1.1 source](https://github.com/Qabbout/stacked-prs-skill/archive/refs/tags/v1.1.1.zip), review it, and copy `SKILL.md`, `references/`, and `scripts/` into your agent's skills directory under `stacked-prs/`, preserving executable permissions on the shell scripts.
 
 ## Use
 
@@ -49,7 +49,7 @@ claude plugin update stacked-prs@qabbout-stacked-prs
 codex plugin marketplace upgrade qabbout-stacked-prs
 ```
 
-Claude Code uses the plugin manifest version; automatic updates are opt-in in `/plugin`. The Codex command refreshes the marketplace catalog. Both marketplaces track the default branch; the standalone installation stays on tag `v1.1.0`. To update an older standalone installation, rerun the install command above.
+Claude Code uses the plugin manifest version; automatic updates are opt-in in `/plugin`. The Codex command refreshes the marketplace catalog. Both marketplaces track the default branch; the standalone installation stays on tag `v1.1.1`. To update an older standalone installation, rerun the install command above.
 
 ## Test locally
 

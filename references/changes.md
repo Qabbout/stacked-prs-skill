@@ -33,7 +33,7 @@ Reopen it if the host allows; GitHub and GitLab usually do, but Bitbucket may no
 
 ## A hotfix on the base touches stack files
 
-Merge the base into the integration branch and into the independent slices the hotfix conflicts with, then carry those merges up. Approve each push. From now on, pass `-i` to `split-coverage.sh`.
+Merge the base into the integration branch and into the independent slices the hotfix conflicts with, then carry those merges up, including copied dependents. Reconcile affected behavior and callers even when Git reports no conflict (`reconciliation.md`); update the porting log and checks against the new tips. Approve each push. From now on, pass `-i` to `split-coverage.sh`, recording that it skips base-changed paths and cannot verify their preservation.
 
 ## CI fails on slice k because of slice j below it
 
