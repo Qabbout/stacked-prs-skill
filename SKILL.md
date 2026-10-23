@@ -4,7 +4,7 @@ description: Split large changes into reviewable stacked pull requests, maintain
 license: MIT
 metadata:
   author: Abdulrahman Qabbout
-  version: "1.1.1"
+  version: "1.1.2"
 ---
 
 # Stacked PRs

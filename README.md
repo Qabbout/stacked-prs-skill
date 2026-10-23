@@ -28,7 +28,7 @@ npx skills add https://github.com/Qabbout/stacked-prs-skill --skill stacked-prs
 
 Choose your agent in the installer. Also available on [skills.sh](https://skills.sh/qabbout/stacked-prs-skill/stacked-prs).
 
-The command leaves the installer version unpinned and installs from this repository's default branch. npm is used only for installation. For a versioned manual installation without npm, download the [v1.1.1 source](https://github.com/Qabbout/stacked-prs-skill/archive/refs/tags/v1.1.1.zip), review it, and copy `SKILL.md`, `references/`, and `scripts/` into your agent's skills directory under `stacked-prs/`, preserving executable permissions on the shell scripts.
+The command leaves the installer version unpinned and installs from this repository's default branch. npm is used only for installation. For a versioned manual installation without npm, download the [v1.1.2 source](https://github.com/Qabbout/stacked-prs-skill/archive/refs/tags/v1.1.2.zip), review it, and copy `SKILL.md`, `references/`, and `scripts/` into your agent's skills directory under `stacked-prs/`, preserving executable permissions on the shell scripts.
 
 ## Use
 
