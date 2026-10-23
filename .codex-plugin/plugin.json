@@ -6,5 +6,10 @@
   "homepage": "https://github.com/Qabbout/stacked-prs-skill",
   "repository": "https://github.com/Qabbout/stacked-prs-skill",
   "license": "MIT",
-  "skills": "./."
+  "skills": "./.",
+  "interface": {
+    "displayName": "Stacked PRs",
+    "shortDescription": "Split, maintain, and land stacked PRs.",
+    "composerIcon": "./assets/icon.svg"
+  }
 }
