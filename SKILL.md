@@ -61,6 +61,22 @@ Read the repo's own conventions before you name anything: branch names, commit s
 10. **Verify dependent PR targets before deleting a branch.** Record every open PR targeting the parent. Where the current host documents and supports retargeting on merge-and-delete, use that workflow, then verify every dependent remains open with the expected target. Otherwise retarget dependents explicitly before merging and deleting the parent. Treat Bitbucket, GitLab, and repository-specific behavior as unverified until checked; never assume automatic retargeting. Never delete an unmerged integration or dropped-slice branch while a PR targets it. Close the reference PR only within the user's authorization.
 11. **Require authorization before host or tracker writes.** That covers creating PRs, editing a title, description, or target, comments, merging, deleting branches, and tracker changes. Prepare the exact text or action and request any missing authorization; do not ask again for an already authorized action within the same scope. Follow the user's attribution preferences; do not add unsolicited generated-by footers or co-author trailers.
 
+## GitHub: use `gh stack`
+
+When the host is GitHub (the remote is github.com or a GitHub Enterprise host, and `gh` is authenticated), use the `gh stack` CLI extension for stack operations instead of hand-rolling them. Check with `gh stack --help`; if it is missing, tell the user and offer `gh extension install github/gh-stack`, otherwise fall back to the manual workflow in this skill. On GitLab, Bitbucket, and other hosts, ignore this section.
+
+| Task | Command |
+|---|---|
+| Map the stack | `gh stack view` |
+| Turn existing slice branches into a stack | `gh stack init <branch1> <branch2> …` |
+| Add a slice on top | `gh stack add <branch>` |
+| Create or update the PRs | `gh stack submit` |
+| Push branches | `gh stack push` |
+| Sync with the remote | `gh stack sync` |
+| Land the stack | `gh stack merge` |
+
+The rules above still apply. Every push and every host write (`submit`, `push`, `merge`, `unstack`) needs the user's authorization (rules 4 and 11). `safe-push.sh` still prints the plan first, and `gh stack` runs only after approval. Do not use `gh stack rebase`, and check what `sync` and `submit` would push before approving them: rule 3 forbids rebasing or force-pushing a pushed branch. Keep the reference branch out of the stack (rule 1).
+
 ## Phase 0: Find what already exists (always first)
 
 Never decide the phase from the user's wording alone.
@@ -69,7 +85,7 @@ For planning or triage-only requests, inspect only authorized resources and mark
 
 1. **Branches and worktrees:** run `$SKILL/scripts/stack-detect.sh [-b <base>] <ID>`. It finds slice branches (`<ID>-NN-`), the integration branch, candidate reference branches, and worktrees, all matched on the exact ticket. For each branch it shows where it exists, whether the copies differ, and whether it's merged into the base.
 2. **PRs on the host, including merged and closed ones:**
-   - GitHub: `gh pr list --state all --search "<ID>" --json number,title,state,headRefName,baseRefName`
+   - GitHub: `gh stack view` if the stack is tracked, plus `gh pr list --state all --search "<ID>" --json number,title,state,headRefName,baseRefName` (see "GitHub: use `gh stack`")
    - GitLab: `glab mr list --all --search "<ID>"`
    - Bitbucket: the REST API or MCP, with every state.
 3. **Decide with the first row that matches, top to bottom, and say which before changing anything:**
